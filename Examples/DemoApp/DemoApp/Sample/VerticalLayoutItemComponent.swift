@@ -21,7 +21,7 @@ struct VerticalLayoutItemComponent: Component {
 
 final class VerticalLayoutItemView: UIView {
     private enum Layout {
-        static let horizontalInset: CGFloat = 16
+        static let horizontalInset: CGFloat = 0
         static let verticalInset: CGFloat = 8
         static let spacing: CGFloat = 4
     }

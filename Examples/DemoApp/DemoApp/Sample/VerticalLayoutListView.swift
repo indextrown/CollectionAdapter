@@ -28,8 +28,6 @@ final class VerticalLayoutListView: UIView {
 //        collectionView: collectionView,
 //        layoutAdapter: layoutAdapter
 //    )
-    
-    
 
     private var viewModels: [VerticalLayoutItemComponent.ViewModel] = [] {
         didSet {
@@ -82,9 +80,23 @@ final class VerticalLayoutListView: UIView {
                             let model = context.anyComponent.base.viewModel as! VerticalLayoutItemView.ViewModel
                             print("사라짐:  \(model.title!)")
                         }
+                        .onHighlight { context in
+                            let model = context.anyComponent.base.viewModel as! VerticalLayoutItemView.ViewModel
+                            print("눌림:  \(model.title!)")
+                        }
+                        .onUnhighlight { context in
+                            let model = context.anyComponent.base.viewModel as! VerticalLayoutItemView.ViewModel
+                            print("눌림취소:  \(model.title!)")
+                        }
                     }
                 }
-                .withSectionLayout(.vertical)
+                .withHeader(SectionHeaderComponent(viewModel: .init(title: "헤더 타이틀", subtitle: "헤더 서브 타이틀")))
+                .withSectionLayout(
+                    DefaultCompositionalLayoutSectionFactory.vertical(spacing: 0)
+                        .withSectionContentInsets(.init(top: 16, leading: 20, bottom: 8, trailing: 20))
+                        .withHeaderPinToVisibleBounds(true)
+                )
+                // .withSectionLayout(.vertical)
             }
             .onRefresh { [weak self] _ in
                 self?.resetViewModels()
@@ -92,6 +104,12 @@ final class VerticalLayoutListView: UIView {
             .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { [weak self] _ in
                 self?.appendViewModels()
             }
+            .didEndDecelerating { _ in
+                print("스크롤 감속 종료")
+            }
+//            .didScrollToTop { _ in
+//                print("스크롤 최상단 이동됨")
+//            }
         )
     }
 
