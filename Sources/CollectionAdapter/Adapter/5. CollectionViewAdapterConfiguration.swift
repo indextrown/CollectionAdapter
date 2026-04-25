@@ -47,14 +47,44 @@ extension CollectionViewAdapterConfiguration {
         // RefreshControl의 색상입니다.
         public let tintColor: UIColor
         
+        // RefreshControl에 표시할 텍스트입니다.
+        public let text: String?
+        
+        // RefreshControl에 표시할 텍스트 색상입니다.
+        public let textColor: UIColor?
+        
         /// 이 함수를 사용하여 RefreshControl을 활성화하고 색상을 설정합니다.
-        public static func enabled(tintColor: UIColor) -> RefreshControl {
-            .init(isEnabled: true, tintColor: tintColor)
+        public static func enabled(
+            tintColor: UIColor,
+            text: String? = nil,
+            textColor: UIColor? = nil
+        ) -> RefreshControl {
+            .init(
+                isEnabled: true,
+                tintColor: tintColor,
+                text: text,
+                textColor: textColor
+            )
         }
         
         /// 이 함수를 사용하여 RefreshControl을 비활성화합니다.
         public static func disabled() -> RefreshControl {
-            .init(isEnabled: false, tintColor: .clear)
+            .init(
+                isEnabled: false,
+                tintColor: .clear,
+                text: nil,
+                textColor: nil
+            )
         }
     }
 }
+
+//extension CollectionViewAdapterConfiguration.RefreshControl {
+//    
+//    public struct Appearance {
+//        public let text: String?
+//        public let textFont: String?
+//        public let textColor: UIColor?
+//        public let indicator: Indicator
+//    }
+//}

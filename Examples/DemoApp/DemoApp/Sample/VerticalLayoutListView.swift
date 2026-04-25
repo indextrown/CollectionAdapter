@@ -17,7 +17,11 @@ final class VerticalLayoutListView: UIView {
 
     private lazy var collectionViewAdapter = CollectionViewAdapter(
         configuration: CollectionViewAdapterConfiguration(
-            refreshControl: .enabled(tintColor: .systemBlue)
+            refreshControl: .enabled(
+                tintColor: .systemGray,
+                text: "새로고침 중...",
+                textColor: .white
+            )
         ),
         collectionView: collectionView,
         layoutAdapter: layoutAdapter

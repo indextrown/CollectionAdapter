@@ -62,8 +62,14 @@ final public class CollectionViewAdapter: NSObject {
     
     /// pull-to-refresh 컨트롤
     private lazy var pullToRefreshControl: UIRefreshControl = {
-       let refreshControl = UIRefreshControl()
+        let refreshControl = UIRefreshControl()
         refreshControl.tintColor = configuration.refreshControl.tintColor
+        refreshControl.attributedTitle = NSAttributedString(
+            string: configuration.refreshControl.text ?? "",
+            attributes: configuration.refreshControl.textColor.map {
+                [.foregroundColor: $0]
+            } ?? [:]
+        )
         refreshControl.addTarget(
             self,
             action: #selector(pullToRefresh),
