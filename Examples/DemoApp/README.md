@@ -160,6 +160,80 @@ collectionViewAdapter.apply(
 - `fitContent` 가로 카드와 pill 태그가 각각 어떤 방식으로 크기를 계산하는지 보고 싶을 때
 - reload 이후에도 가로 섹션이 안정적으로 유지되는지 테스트하고 싶을 때
 
+### `LightweightAdapterViewController`
+
+파일: [LightweightAdapterViewController.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/6.%20LightweightAdapter/LightweightAdapterViewController.swift:1)
+
+`TurboListKit`을 import 하지 않고도, `CollectionViewAdapter`의 핵심 아이디어만 남겨 직접 구현한 초경량 예제입니다.
+
+관련 파일:
+
+- [LightweightAnyComponent.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/6.%20LightweightAdapter/LightweightAnyComponent.swift:1)
+- [LightweightCollectionAdapter.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/6.%20LightweightAdapter/LightweightCollectionAdapter.swift:1)
+
+핵심 포인트:
+
+- 어댑터는 `reuseIdentifier`와 `LightweightAnyComponent`만 알고 동작
+- 셀 등록 책임은 각 컴포넌트가 직접 가짐
+- 실제 셀 타입으로의 `guard let` 캐스팅은 타입 소거 박스 내부에서만 수행
+- 그래서 어댑터는 `HeroCardCell`, `PillCell`, `NoteCell` 같은 구체 타입을 몰라도 됨
+
+이럴 때 참고하면 좋습니다:
+
+- 라이브러리 전체를 도입하기 전에 패턴만 작게 검증하고 싶을 때
+- `UICollectionViewDataSource` 반복 코드를 줄이되 구조는 직접 통제하고 싶을 때
+- 셀 등록과 셀 설정 책임을 어댑터 밖으로 분리하는 방법을 보고 싶을 때
+- 타입 소거(`AnyComponent`)가 왜 필요한지 아주 작은 코드로 이해하고 싶을 때
+
+### `LightweightCompositionalAdapterViewController`
+
+파일: [LightweightCompositionalAdapterViewController.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/7.%20CompositionalAdapter/LightweightCompositionalAdapterViewController.swift:1)
+
+`6`번 예제의 경량 어댑터 아이디어를 유지하면서, 레이아웃만 `FlowLayout` 대신 `UICollectionViewCompositionalLayout`으로 바꾼 예제입니다.
+
+관련 파일:
+
+- [LightweightCompositionalSection.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/7.%20CompositionalAdapter/LightweightCompositionalSection.swift:1)
+- [LightweightCompositionalAdapter.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/7.%20CompositionalAdapter/LightweightCompositionalAdapter.swift:1)
+
+핵심 포인트:
+
+- 아이템 타입 소거 방식은 그대로 유지
+- 각 섹션이 `layoutProvider`를 가져 섹션별로 다른 `NSCollectionLayoutSection`을 생성
+- 세로 카드 섹션과 가로 pill 섹션을 한 화면에서 동시에 구성 가능
+- FlowLayout의 `sizeForItemAt` 중심 사고에서, 섹션 레이아웃 구성 중심 사고로 이동
+
+이럴 때 참고하면 좋습니다:
+
+- 섹션마다 완전히 다른 스크롤/배치 규칙을 주고 싶을 때
+- 가로 연속 스크롤과 세로 카드 리스트를 한 화면에 섞고 싶을 때
+- 경량 어댑터 패턴을 유지하면서 Compositional Layout까지 확장하는 방법을 보고 싶을 때
+
+### `MiniListViewController`
+
+파일: [MiniListViewController.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/8.%20MiniList/MiniListViewController.swift:1)
+
+`List -> Section -> Cell -> Component` 구조가 왜 생기는지 보여주는 예제입니다. `6`번과 `7`번보다 한 단계 더 올라가, 어댑터 입력을 `[AnyComponent]`나 `[Section]`이 아니라 `MiniList` 하나로 고정합니다.
+
+관련 파일:
+
+- [MiniListAnyComponent.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/8.%20MiniList/MiniListAnyComponent.swift:1)
+- [MiniListModels.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/8.%20MiniList/MiniListModels.swift:1)
+- [MiniListAdapter.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/8.%20MiniList/MiniListAdapter.swift:1)
+
+핵심 포인트:
+
+- 루트 타입이 `MiniList` 하나로 고정됨
+- 그 안에서 `MiniListSection`, `MiniListCell`, `MiniListAnyComponent` 계층이 생김
+- 화면 전체 상태를 하나의 스냅샷으로 다루기 쉬워짐
+- 추후 diff, 전역 이벤트, refresh 상태, 공통 옵션을 붙일 자리가 자연스럽게 생김
+
+이럴 때 참고하면 좋습니다:
+
+- 왜 단순 배열보다 `List` 루트가 장기적으로 유리한지 보고 싶을 때
+- 선언형 DSL을 `화면 전체 상태` 단위로 확장하고 싶을 때
+- 섹션과 셀이 커질수록 모델 계층이 왜 필요한지 이해하고 싶을 때
+
 ## 오토레이아웃 사이즈 헬퍼
 
 [UIView+AutoLayoutFittingSize.swift](/Users/kimdonghyeon/2025/개발/라이브러리/TurboListKit/Examples/DemoApp/DemoApp/UIView+AutoLayoutFittingSize.swift:1)의 `autoLayoutFittingSize(for:)`는 오토레이아웃 기반 컴포넌트에서 공통으로 쓰는 `sizeThatFits` 헬퍼입니다.

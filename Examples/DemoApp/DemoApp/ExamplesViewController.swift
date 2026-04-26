@@ -8,6 +8,9 @@ final class ExamplesViewController: UITableViewController {
         case autoLayoutSample
         case horizontalOnly
         case square
+        case lightweightAdapter
+        case compositionalAdapter
+        case miniList
 
         var title: String {
             switch self {
@@ -23,6 +26,12 @@ final class ExamplesViewController: UITableViewController {
                 return "SampleAutoLayoutViewController"
             case .autoLayoutSample:
                 return "AutoLayoutSampleViewController"
+            case .lightweightAdapter:
+                return "LightweightAdapterViewController"
+            case .compositionalAdapter:
+                return "LightweightCompositionalAdapterViewController"
+            case .miniList:
+                return "MiniListViewController"
             }
         }
 
@@ -40,6 +49,12 @@ final class ExamplesViewController: UITableViewController {
                 return "SampleViewController를 오토레이아웃 컴포넌트로 옮긴 버전"
             case .autoLayoutSample:
                 return "컴포넌트 내부를 오토레이아웃으로 구성한 예제"
+            case .lightweightAdapter:
+                return "TurboListKit import 없이 초경량 CollectionAdapter를 직접 만드는 예제"
+            case .compositionalAdapter:
+                return "CompositionalLayout 기반 초경량 어댑터 예제"
+            case .miniList:
+                return "MiniList -> MiniSection -> MiniCell 구조로 List가 왜 필요한지 보여주는 예제"
             }
         }
 
@@ -57,6 +72,12 @@ final class ExamplesViewController: UITableViewController {
                 return SampleAutoLayoutViewController()
             case .autoLayoutSample:
                 return AutoLayoutSampleViewController()
+            case .lightweightAdapter:
+                return LightweightAdapterViewController()
+            case .compositionalAdapter:
+                return LightweightCompositionalAdapterViewController()
+            case .miniList:
+                return MiniListViewController()
             }
         }
     }
