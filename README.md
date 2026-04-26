@@ -114,6 +114,9 @@ override func sizeThatFits(_ size: CGSize) -> CGSize {
 }
 ```
 
+- 셀 너비는 이미 정해져 있고, 오토레이아웃이 계산한 실제 높이를 알아야 할 때 쓰기 좋습니다.
+- `systemLayoutSizeFitting(...)` 호출을 공통 헬퍼로 감싸서 여러 컴포넌트에서 같은 `sizeThatFits(_:)` 패턴을 재사용할 수 있습니다.
+
 폭 상한이나 최소 높이가 필요한 카드형 컴포넌트는 이렇게 사용할 수 있습니다.
 
 ```swift
@@ -126,6 +129,9 @@ override func sizeThatFits(_ size: CGSize) -> CGSize {
 }
 ```
 
+- 카드가 너무 넓어지지 않게 최대 폭을 제한하고 싶을 때 사용합니다.
+- 오토레이아웃 결과보다 작은 높이가 나오면 안 되는 UI에서 최소 높이를 함께 보장할 수 있습니다.
+
 반대로 pill 태그처럼 높이는 고정이고 텍스트 길이에 따라 폭이 달라져야 하는 뷰는 `sizeThatFits(_:)`에서 내용 크기와 패딩을 직접 계산하는 편이 더 자연스럽습니다.
 
 ```swift
@@ -136,6 +142,9 @@ override func sizeThatFits(_ size: CGSize) -> CGSize {
     return CGSize(width: labelSize.width + 28, height: 48)
 }
 ```
+
+- 높이는 고정이고 폭만 내용에 따라 달라지는 경우라면 오토레이아웃 헬퍼보다 직접 계산이 더 단순합니다.
+- pill, chip, tag처럼 한 줄 텍스트와 좌우 패딩만으로 크기가 결정되는 컴포넌트에 잘 맞습니다.
 
 ## 핵심 타입
 
