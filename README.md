@@ -13,6 +13,7 @@ DifferenceKit 기반 diff 업데이트, compositional layout 연결, 이벤트 m
 - [사용법](#사용법)
 - [핵심 타입](#핵심-타입)
 - [기능](#기능)
+- [성능 비교](#성능-비교)
 - [전체 파이프라인](#전체-파이프라인)
 - [동작 파이프라인](#동작-파이프라인)
 
@@ -177,6 +178,42 @@ func render() {
 | 크기 조절 | `.size(_:)` | 이미지 렌더링 크기를 포인트 단위로 설정합니다. |
 | 색상 적용 | `.tintColor(_:)` | 템플릿 렌더링용 tint color를 적용합니다. |
 | 회전 애니메이션 | `.spin(duration:)` | 지정한 duration으로 인디케이터 회전 애니메이션을 적용합니다. |
+
+## 성능 비교
+
+`TurboListKit`은 기본 diff 엔진으로 `UICollectionViewDiffableDataSource` 대신 `DifferenceKit`을 사용합니다. Apple의 diffable data source도 섹션과 아이템 업데이트를 지원하지만, `TurboListKit`은 diff 계산 결과와 batch update fallback 정책을 adapter에서 직접 제어하기 위해 `DifferenceKit`을 선택했습니다.
+
+### 왜 `DifferenceKit`을 선택했는가
+
+| 비교 항목 | `DifferenceKit` | `UICollectionViewDiffableDataSource` |
+| --- | --- | --- |
+| 핵심 접근 | 직접 diff를 계산해 staged batch update에 반영 | snapshot을 적용하고 내부 diff를 시스템에 위임 |
+| 알고리즘 근거 | Paul Heckel 기반, 선형 시간 `O(n)` diff를 명시 | Apple 문서가 단순성, identifier 기반 업데이트를 강조 |
+| 섹션 지원 | 2차원 sectioned collection diff를 직접 모델링 | snapshot 중심 API로 추상화 |
+| 업데이트 제어 | change 수가 많을 때 `reloadData` fallback 같은 정책을 세밀하게 제어 가능 | apply 시점 제어는 쉽지만 내부 diff 전략은 추상화되어 있음 |
+| 채택 이유 | 라이브러리 레벨에서 성능 특성과 업데이트 전략을 노출하기 쉬움 | 앱 코드 단순화에는 강점이 있지만 adapter 내부 diff 제어 범위는 좁음 |
+
+### 시간 복잡도 근거
+
+- `DifferenceKit` 공식 README는 Paul Heckel 기반 diff 알고리즘이며, 선형 시간 `O(n)`으로 동작한다고 명시합니다.
+- 같은 비교 표에서 `Swift.CollectionDifference`는 Myers 기반 `O(ND)`로 소개됩니다.
+- Apple의 diffable data source 문서는 내부 복잡도를 전면에 내세우기보다, snapshot과 stable identifier를 사용해 컬렉션 변경을 단순화하는 점에 초점을 둡니다.
+
+### 벤치마크 근거
+
+`DifferenceKit` 공식 벤치마크에는 `Swift.CollectionDifference`와의 비교가 포함되어 있습니다.
+
+| 시나리오 | `DifferenceKit` | `Swift.CollectionDifference` |
+| --- | --- | --- |
+| 5,000개 원소, 1,000 delete, 1,000 insert, 200 shuffle | `0.0019s` | `0.0620s` |
+| 100,000개 원소, 10,000 delete, 10,000 insert, 2,000 shuffle | `0.0348s` | `5.0281s` |
+
+이 수치는 `DifferenceKit` 저장소에서 공개한 벤치마크 결과이며, `TurboListKit` 자체 벤치마크는 아닙니다. 다만 adapter가 large diff를 다루는 상황에서 어떤 diff 엔진을 기반으로 삼았는지 설명하는 근거로는 충분합니다.
+
+### 참고 자료
+
+- [Apple, Updating collection views using diffable data sources](https://developer.apple.com/documentation/uikit/updating-collection-views-using-diffable-data-sources): stable identifier와 snapshot 기반 업데이트 설명
+- [DifferenceKit README](https://github.com/ra1028/DifferenceKit): `O(n)` 알고리즘 설명, `Swift.CollectionDifference` 포함 벤치마크 공개
 
 ## 전체 파이프라인
 
