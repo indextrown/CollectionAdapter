@@ -111,7 +111,7 @@ func render() {
 | `SupplementaryView` | header/footer 표현 모델 | 섹션 보조 뷰를 붙일 때 |
 | `List` | 화면 전체 리스트 모델 | 여러 섹션과 리스트 이벤트를 묶을 때 |
 | `CollectionViewAdapter` | `UICollectionView`와 `List`를 연결하는 핵심 어댑터 | 실제 화면에 리스트를 반영할 때 |
-| `CollectionViewAdapterConfiguration` | adapter 동작 옵션 | refresh, batch update, reconfigure 옵션을 설정할 때 |
+| `CollectionViewAdapterConfiguration` | adapter 동작 옵션 | refresh, 커스텀 인디케이터, batch update, reconfigure 옵션을 설정할 때 |
 | `CollectionViewAdapterUpdateStrategy` | 업데이트 방식 enum | animated batch, non-animated batch, reloadData를 고를 때 |
 | `CollectionViewLayoutAdapter` | compositional layout과 section 데이터를 연결 | `UICollectionViewCompositionalLayout`의 section provider를 붙일 때 |
 | `CompositionalLayoutSectionFactory` | 섹션 레이아웃 생성 프로토콜 | 커스텀 `NSCollectionLayoutSection`을 만들 때 |
@@ -163,9 +163,20 @@ func render() {
 | non-animated diff update | `.nonanimatedBatchUpdates` | 애니메이션 없이 변경분만 갱신합니다. |
 | full reload | `.reloadData` | 전체 `reloadData()`를 수행합니다. |
 | refresh control | `CollectionViewAdapterConfiguration.RefreshControl` | 시스템 `UIRefreshControl` 연결 여부와 tint를 설정합니다. |
+| custom refresh indicator | `CollectionViewAdapterConfiguration.RefreshControl.Appearance` | 기본 스피너 대신 커스텀 이미지 인디케이터 표시 방식을 설정합니다. |
 | queued update | adapter 내부 큐 | 업데이트 중 들어온 새 요청을 마지막 요청 기준으로 이어서 처리합니다. |
 | reconfigure items | `enablesReconfigureItems` | 가능하면 셀 재생성 대신 reconfigure 경로를 사용합니다. |
 | prefetching plugin | `CollectionViewPrefetchingPlugin` | prefetch lifecycle을 확장합니다. |
+
+### Custom Refresh Indicator
+
+| 대상 | API | 설명 |
+| --- | --- | --- |
+| 인디케이터 활성화 | `refreshControlAppearance: .init(...)` | refresh control 위에 커스텀 인디케이터 외형을 연결합니다. |
+| 기본 이미지 지정 | `Indicator.image(_:)` | 커스텀 인디케이터로 사용할 이미지를 지정합니다. |
+| 크기 조절 | `.size(_:)` | 이미지 렌더링 크기를 포인트 단위로 설정합니다. |
+| 색상 적용 | `.tintColor(_:)` | 템플릿 렌더링용 tint color를 적용합니다. |
+| 회전 애니메이션 | `.spin(duration:)` | 지정한 duration으로 인디케이터 회전 애니메이션을 적용합니다. |
 
 ## 전체 파이프라인
 
